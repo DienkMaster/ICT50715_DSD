@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>LPG MASHUP</title>
+		<style type="text/css">
+			body {
+    			display: block;
+    			margin: 0%;
+			}
+
+			header {
+				width: 100%;
+				height: 70px;
+				background: black;
+				bottom: 0px;
+				left: 0px;
+				right: 0px;
+				margin-bottom: 0px;
+				text-align: center;
+			}
+
+			header img{
+				background: white;
+			}
+
+			footer {
+				width: 100%;
+				height: 30px;
+				background: black;
+				position: fixed;
+				bottom: 0px;
+				left: 0px;
+				right: 0px;
+				margin-bottom: 0px;
+			}
+
+			footer p{
+				color: white;
+				font-family: sans-serif;
+			    font-size: 14px;
+			    text-align: center;
+			    margin-top: 10px;
+			}
+
+			.content{
+				width: 100%;
+			}
+
+			#content-background{
+				width: 100%;
+				height: 880px;
+				background-image: url("LPA-assements.png");
+				opacity: 0.3;
+				position: absolute;
+			}
+			
+			.frames{
+				width : 1010px;
+				height: 850px;
+				background: white;
+				position: relative;
+			}
+
+			.media-frame{
+				width : 500px;
+				height : 400px;
+				border: none;
+				overflow: hidden;
+				margin-top: 1%;
+				display: inline-block;
+			}
+
+			.media-frame-left{
+				float: left;
+			}
+
+			.media-frame-right{
+				float: right;
+			}
+
+			.media-frame-left h1{
+				font-family: sans-serif;
+				font-size: 32px;
+			}
+
+			.media-frame-left p{
+				font-family: sans-serif;
+				text-align: justify;
+    			margin: 2%;
+    			font-size: 24px;
+			}
+
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	</head>
+	<body>
+		<header>
+			<img src="LPA-extensive-assements.png">
+		</header>
+		<div class="content" align="center">
+			<div id="content-background"></div>
+			<div class="frames"  align="center">
+				<div class="media-frame media-frame-left" >
+					<h1>
+						Logical Peripherals Australia
+					</h1>
+					<p>
+						Our mission is to supply high quality computer peripherals, reliable customer service and above all customer satisfaction. We strive to deliver the very best in the latest technologies and support our customers with the highest after sales support, allowing our customers to enjoy the best of technology that our ever-changing world demands.
+					</p>
+				</div>
+				<iframe class="media-frame media-frame-right"
+						src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1325.8354206499378!2d153.02671618702684!3d-27.483079919552384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b915a12624a2471%3A0x1f4b8d86567dc2f9!2s218+Vulture+St%2C+South+Brisbane+QLD+4101%2C+Austr%C3%A1lia!5e0!3m2!1spt-BR!2sbr!4v1522718575081">
+				</iframe>
+				<iframe class="media-frame media-frame-left" 
+						src="https://www.youtube.com/embed/M0F4cc2dkV8" 
+						allow="autoplay; encrypted-media">
+				</iframe>
+				<iframe class="media-frame media-frame-right"
+						scrolling="no"
+						src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FLPAeComms%2F&tabs=timeline&width=500&small_header=false&adapt_container_width=false&hide_cover=false&show_facepile=true&appId=1588770717845358" 
+						allowTransparency="true">
+				</iframe>
+			</div>
+		</div>
+		<footer>
+			<p>All rights reserved 2018 | By Logical Peripherals Australia | Contact: Diego (diegomaster10@gmail.com)</p>
+		</footer>
+	<!--
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSxTo0CcOIdaiTxGJVs89VQetw0OxDxaw&callback=initMap" async defer></script>
+		<script>
+	      function initMap() {
+	        var uluru = {lat: -25.363, lng: 131.044};
+	        var map = new google.maps.Map(document.getElementById('map'), {
+	          zoom: 4,
+	          center: uluru
+	        });
+	        var marker = new google.maps.Marker({
+	          position: uluru,
+	          map: map
+	        });
+	      }
+	    </script>
+
+	    <div id="map"  style="width:400px;height:400px;"></div>
+	-->
+	</body>
+
+	<script type="text/javascript" language="javascript">
+	    $(document).ready(function(){
+	    	var tamHeader = 70;
+	    	var tamFooter = 30;
+	    	var tamWindow = window.innerHeight;
+	    	var tamContentStr = $('#content-background').css("height");
+	    	var tamContent = parseInt(tamContentStr.substring(0, tamContentStr.length-2));
+
+	    	if(tamWindow > tamContent){
+	    		var diff = (tamWindow - tamContent) - tamHeader //+ tamFooter
+	    		var tamanho = tamContent + diff
+	    		var tamanhoFramesStr = $('.frames').css("height")
+	    		var tamanhoFrames = parseInt(tamanhoFramesStr.substring(0, tamanhoFramesStr.length-2)) + diff;
+
+	    		$('#content-background').css("height", tamanho + "px")
+	    		$('.frames').css("height", tamanhoFrames + "px")
+	    	}
+
+	        //$('footer').offset().top 
+	        //var tamClassFrames = window.innerHeight - 100;
+	        //$('.frames').css("height", tamClassFrames+"px");
+	        
+	    });
+	</script>
+</html>
