@@ -107,7 +107,6 @@ public class DAOHelper {
     }
 
     public static <T> int execute(final Connection conn, final String sql, final PrepareStatementCallbackHandler statementHandler) throws LpaBaseRuntimeException {
-
         PreparedStatement statement = null;
         final String METHOD_NAME = "execute";
 
@@ -117,8 +116,6 @@ public class DAOHelper {
             return statement.executeUpdate();
         } catch (final Exception e) {
             String msgErro = null;
-            //log.log(Level.SEVERE, "Execution of the sql statement has an error:");
-            //log.log(Level.SEVERE, e.getMessage(), e);
             if (e instanceof SQLException) {
                 if (((SQLException)e).getErrorCode() == DAOHelper.SQL_ERROR_DUPLICATE_KEY) {
                     msgErro = "Erro duplicate key";
@@ -149,31 +146,26 @@ public class DAOHelper {
 
     }
 
-    public static <T> List<T> executeProcedure(final Connection conn, final String sql, final CallableStatementCallbackHandler statementHandler, final MapperCallbackHandler<T> mapperHandler) {
-
+    public static <T> List<T> executeProcedure(final Connection conn, final String sql, final CallableStatementCallbackHandler statementHandler,
+                                               final MapperCallbackHandler<T> mapperHandler) throws LpaBaseRuntimeException{
         final ResultSetCallbackHandler<T> resultSetHandler = new ResultSetCallbackHandler<T>() {
-
             final List<T> result = new LinkedList<T>();
-
             public void execute(final T bean) {
                 this.result.add(bean);
             }
-
             public List<T> getList() {
                 return this.result;
             }
         };
 
         DAOHelper.executeProcedure(conn, sql, statementHandler, resultSetHandler, mapperHandler);
-
         return resultSetHandler.getList();
 
     }
 
-    public static <T> T executeProcedure(final Connection conn, final String sql, final CallableStatementCallbackHandler statementHandler, final ProcMapperCallbackHandler<T> procMapperHandler) {
-
+    public static <T> T executeProcedure(final Connection conn, final String sql, final CallableStatementCallbackHandler statementHandler,
+                                         final ProcMapperCallbackHandler<T> procMapperHandler) throws LpaBaseRuntimeException{
         final String METHOD_NAME = "executeProcedure";
-
         CallableStatement statement = null;
         final ResultSet rs = null;
         T t;
@@ -184,9 +176,7 @@ public class DAOHelper {
             statement.execute();
             t = procMapperHandler.execute(statement);
         } catch (final Exception e) {
-            //log.log(Level.SEVERE, "Execution of the sql statement has an error:");
-            //log.log(Level.SEVERE, e.getMessage(), e);
-            throw new BARSRuntimeException(new FordExceptionAttributes.Builder(CLASS_NAME, METHOD_NAME).build(), "Erro executando procedure", e);
+            throw new LpaBaseRuntimeException(String.format("%s: %s - Data base procedure execution error", CLASS_NAME, METHOD_NAME), e.getCause());
         } finally {
             close(rs);
             close(statement);
@@ -195,11 +185,9 @@ public class DAOHelper {
         return t;
     }
 
-    public static <T> List<T> executeProcedure(final Connection conn, final String sql, final CallableStatementCallbackHandler statementHandler, final ResultSetCallbackHandler<T> resultSetHandler,
-            final MapperCallbackHandler<T> mapperHandler) {
-
+    public static <T> List<T> executeProcedure(final Connection conn, final String sql, final CallableStatementCallbackHandler statementHandler,
+                                               final ResultSetCallbackHandler<T> resultSetHandler, final MapperCallbackHandler<T> mapperHandler) throws LpaBaseRuntimeException{
         final String METHOD_NAME = "executeProcedure";
-
         CallableStatement statement = null;
         ResultSet rs = null;
         final List<T> returnList = new ArrayList<T>();
@@ -218,9 +206,7 @@ public class DAOHelper {
                 results = statement.getMoreResults();
             } while (results);
         } catch (final Exception e) {
-            //log.log(Level.SEVERE, "Execution of the sql statement has an error:");
-            //log.log(Level.SEVERE, e.getMessage(), e);
-            throw new BARSRuntimeException(new FordExceptionAttributes.Builder(CLASS_NAME, METHOD_NAME).build(), "Erro executando procedure", e);
+            throw new LpaBaseRuntimeException(String.format("%s: %s - Data base procedure execution error", CLASS_NAME, METHOD_NAME), e.getCause());
         } finally {
             close(rs);
             close(statement);
@@ -234,8 +220,7 @@ public class DAOHelper {
             try {
                 rs.close();
             } catch (final SQLException e) {
-                //log.log(Level.SEVERE, "RecordSet close threw an error:");
-                //log.log(Level.SEVERE, e.getMessage(), e);
+                e.printStackTrace();
             }
         }
     }
@@ -245,8 +230,7 @@ public class DAOHelper {
             try {
                 statement.close();
             } catch (final SQLException e) {
-                //log.log(Level.SEVERE, "Statement close threw an error:");
-                //log.log(Level.SEVERE, e.getMessage(), e);
+                e.printStackTrace();
             }
         }
     }
@@ -275,6 +259,14 @@ public class DAOHelper {
     public static void setParameter(final PreparedStatement statement, final int i, final Long value) throws SQLException {
         if (value != null) {
             statement.setLong(i, value);
+        } else {
+            statement.setNull(i, Types.NUMERIC);
+        }
+    }
+
+    public static void setParameter(final PreparedStatement statement, final int i, final Double value) throws SQLException {
+        if (value != null) {
+            statement.setDouble(i, value);
         } else {
             statement.setNull(i, Types.NUMERIC);
         }
