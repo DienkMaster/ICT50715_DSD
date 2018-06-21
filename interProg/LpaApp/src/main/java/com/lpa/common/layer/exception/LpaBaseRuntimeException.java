@@ -1,6 +1,6 @@
 package com.lpa.common.layer.exception;
 
-public abstract class LpaBaseRuntimeException extends Exception {
+public class LpaBaseRuntimeException extends Exception {
 
     private static final long serialVersionUID = 1L;
 

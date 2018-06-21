@@ -1,6 +1,3 @@
-//****************************************************************
-//* Copyright (c) 2014 Ford Motor Company. All Rights Reserved.
-//****************************************************************
 package com.lpa.common.dao.base;
 
 import java.math.BigDecimal;
@@ -15,40 +12,36 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.lpa.common.layer.exception.LpaBaseRuntimeException;
+
 public class DAOHelper {
     private static final String CLASS_NAME = ConnectionManager.class.getName();
-    //private static final ILogger log = LogFactory.getInstance().getLogger(CLASS_NAME);
-
     private static final int SQL_ERROR_DUPLICATE_KEY = 2627;
     private static final int SQL_ERROR_FOREIGN_KEY = 547;
     private static final int SQL_ERROR_TRUNCATE = 8152;
     private static final int SQL_ERROR_COLUMN_IS_NULL = 515;
 
-    public static <T> List<T> executeQuery(final Connection conn, final String sql, final PrepareStatementCallbackHandler statementHandler, final MapperCallbackHandler<T> mapperHandler) {
-
+    public static <T> List<T> executeQuery(final Connection conn, final String sql,
+                                           final PrepareStatementCallbackHandler statementHandler,
+                                           final MapperCallbackHandler<T> mapperHandler) throws LpaBaseRuntimeException{
         final ResultSetCallbackHandler<T> resultSetHandler = new ResultSetCallbackHandler<T>() {
-
             final List<T> result = new LinkedList<T>();
 
             public void execute(final T bean) {
                 this.result.add(bean);
             }
-
             public List<T> getList() {
                 return this.result;
             }
         };
 
         DAOHelper.executeQuery(conn, sql, statementHandler, resultSetHandler, mapperHandler);
-
         return resultSetHandler.getList();
-
     }
 
-    public static <T> void executeQuery(final Connection conn, final String sql, final PrepareStatementCallbackHandler statementHandler, final ResultSetCallbackHandler<T> resultSetHandler,
-            final MapperCallbackHandler<T> mapperHandler) {
+    public static <T> void executeQuery(final Connection conn, final String sql, final PrepareStatementCallbackHandler statementHandler,
+                                        final ResultSetCallbackHandler<T> resultSetHandler, final MapperCallbackHandler<T> mapperHandler) throws LpaBaseRuntimeException{
         final String METHOD_NAME = "executeQuery";
-
         PreparedStatement statement = null;
         ResultSet rs = null;
 
@@ -60,42 +53,32 @@ public class DAOHelper {
                 resultSetHandler.execute(mapperHandler.execute(rs));
             }
         } catch (final Exception e) {
-            //log.log(Level.SEVERE, "Execution of the sql statement has an error:");
-            //log.log(Level.SEVERE, e.getMessage(), e);
-            throw new BARSRuntimeException(new Exception().Builder(CLASS_NAME, METHOD_NAME).build(), "Erro execu��o comando banco de dados", e);
-
+            throw new LpaBaseRuntimeException(String.format("%s: %s - Data base execution error", CLASS_NAME, METHOD_NAME), e.getCause());
         } finally {
             close(rs);
             close(statement);
         }
-
     }
 
-    public static <T> List<T> executeMultiQuery(final Connection conn, final String sql, final PrepareStatementCallbackHandler statementHandler, final MapperCallbackHandler<T> mapperHandler) {
-
+    public static <T> List<T> executeMultiQuery(final Connection conn, final String sql, final PrepareStatementCallbackHandler statementHandler,
+                                                final MapperCallbackHandler<T> mapperHandler) throws LpaBaseRuntimeException{
         final ResultSetCallbackHandler<T> resultSetHandler = new ResultSetCallbackHandler<T>() {
-
             final List<T> result = new LinkedList<T>();
-
             public void execute(final T bean) {
                 this.result.add(bean);
             }
-
             public List<T> getList() {
                 return this.result;
             }
         };
 
         DAOHelper.executeMultiQuery(conn, sql, statementHandler, resultSetHandler, mapperHandler);
-
         return resultSetHandler.getList();
-
     }
 
-    public static <T> void executeMultiQuery(final Connection conn, final String sql, final PrepareStatementCallbackHandler statementHandler, final ResultSetCallbackHandler<T> resultSetHandler,
-            final MapperCallbackHandler<T> mapperHandler) {
+    public static <T> void executeMultiQuery(final Connection conn, final String sql, final PrepareStatementCallbackHandler statementHandler,
+                                             final ResultSetCallbackHandler<T> resultSetHandler, final MapperCallbackHandler<T> mapperHandler) throws LpaBaseRuntimeException{
         final String METHOD_NAME = "executeMultiQuery";
-
         PreparedStatement statement = null;
         ResultSet rs = null;
 
@@ -115,9 +98,7 @@ public class DAOHelper {
                 resultSetHandler.execute(mapperHandler.execute(rs));
             }
         } catch (final Exception e) {
-            //log.log(Level.SEVERE, "Execution of the sql statement has an error:");
-            //log.log(Level.SEVERE, e.getMessage(), e);
-            throw new BARSRuntimeException(new FordExceptionAttributes.Builder(CLASS_NAME, METHOD_NAME).build(), "Erro execu��o comando banco de dados", e);
+            throw new LpaBaseRuntimeException(String.format("%s: %s - Data base execution error", CLASS_NAME, METHOD_NAME), e.getCause());
         } finally {
             close(rs);
             close(statement);
@@ -125,7 +106,7 @@ public class DAOHelper {
 
     }
 
-    public static <T> int execute(final Connection conn, final String sql, final PrepareStatementCallbackHandler statementHandler) throws BARSRuntimeException {
+    public static <T> int execute(final Connection conn, final String sql, final PrepareStatementCallbackHandler statementHandler) throws LpaBaseRuntimeException {
 
         PreparedStatement statement = null;
         final String METHOD_NAME = "execute";
@@ -157,9 +138,9 @@ public class DAOHelper {
                 }
             }
             if (msgErro == null) {
-                throw new BARSRuntimeException(new FordExceptionAttributes.Builder(CLASS_NAME, METHOD_NAME).build(), "Erro executando comando SQL", e);
+                throw new LpaBaseRuntimeException(String.format("%s: %s - Data base execution error", CLASS_NAME, METHOD_NAME), e.getCause());
             } else {
-                throw new BARSRuntimeException(new FordExceptionAttributes.Builder(CLASS_NAME, METHOD_NAME).build(), msgErro, e);
+                throw new LpaBaseRuntimeException(String.format("%s: %s - %s", CLASS_NAME, METHOD_NAME, msgErro), e.getCause());
             }
 
         } finally {
